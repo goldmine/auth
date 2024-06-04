@@ -3,6 +3,7 @@ import { MailerService } from './mailer/mailer.service';
 import { TokenService } from './token/token.service';
 import { PasswordService } from './password/password.service';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { CaptchaService } from './captcha/captcha.service';
 
 @Module({
   imports: [
@@ -24,7 +25,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
     }),
   ],
 
-  providers: [MailerService, TokenService, PasswordService],
-  exports: [MailerService, TokenService, PasswordService],
+  providers: [MailerService, TokenService, PasswordService, CaptchaService],
+  exports: [MailerService, TokenService, PasswordService, CaptchaService],
 })
 export class ToolModule {}

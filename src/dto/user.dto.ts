@@ -6,6 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
+import { Session } from 'express-session';
 
 export class SignupDto {
   @IsEmail()
@@ -57,4 +58,8 @@ export class resetPasswordDto {
   @IsString()
   @MinLength(8)
   passwordConfirmation: string;
+}
+
+export interface CaptchaSession extends Session {
+  captcha: string;
 }

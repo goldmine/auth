@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Session } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
+  CaptchaSession,
   EmailDto,
   SigninDto,
   SignupDto,
@@ -8,10 +9,15 @@ import {
 } from 'src/dto/user.dto';
 import { Public } from 'src/decorator/public.decorator';
 import { User } from 'src/decorator/user.decorator';
+import * as session from 'express-session';
+import { CaptchaService } from 'src/tool/captcha/captcha.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly captchaService: CaptchaService,
+  ) {}
 
   @Get('users')
   getUsers(@User() user: any) {
@@ -47,5 +53,20 @@ export class AuthController {
   @Public()
   resetPassword(@Body() data: resetPasswordDto) {
     return this.authService.resetPassword(data);
+  }
+
+  @Get('captcha')
+  @Public()
+  generateCaptcha(@Session() session: CaptchaSession) {
+    return this.captchaService.generateCaptcha(session);
+  }
+
+  @Post('captcha')
+  @Public()
+  verifyCaptcha(
+    @Body('captcha') text: string,
+    @Session() session: CaptchaSession,
+  ) {
+    return this.captchaService.verifyCaptcha(text, session);
   }
 }
