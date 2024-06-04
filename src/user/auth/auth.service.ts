@@ -5,12 +5,14 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import {
-  EmailDto,
+  CaptchaSession,
+  ForgotPasswordDto,
   SigninDto,
   SignupDto,
   resetPasswordDto,
 } from 'src/dto/user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { CaptchaService } from 'src/tool/captcha/captcha.service';
 import { MailerService } from 'src/tool/mailer/mailer.service';
 import { PasswordService } from 'src/tool/password/password.service';
 import { TokenService } from 'src/tool/token/token.service';
@@ -22,6 +24,7 @@ export class AuthService {
     private readonly passwordService: PasswordService,
     private readonly tokenService: TokenService,
     private readonly mailerService: MailerService,
+    private readonly captchaService: CaptchaService,
   ) {}
 
   async getUsers() {
@@ -60,7 +63,16 @@ export class AuthService {
     return await this.tokenService.createToken({ id, email });
   }
 
-  async forgotPassword({ email }: EmailDto) {
+  async forgotPassword(
+    { email, captcha }: ForgotPasswordDto,
+    session: CaptchaSession,
+  ) {
+    try {
+      this.captchaService.verifyCaptcha(captcha, session);
+    } catch (e) {
+      throw new HttpException('captcha not correct', 400);
+    }
+
     const user = await this.findUserByEmail(email);
     if (!user) {
       throw new HttpException('user not found!', 400);

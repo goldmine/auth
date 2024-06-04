@@ -29,6 +29,8 @@ export class CaptchaService {
     }
 
     session.captcha = captchaText;
+
+    console.log(session.captcha);
     return { image: canvas.toDataURL() };
   }
 

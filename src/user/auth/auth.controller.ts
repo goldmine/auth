@@ -2,14 +2,13 @@ import { Body, Controller, Get, Post, Query, Session } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import {
   CaptchaSession,
-  EmailDto,
+  ForgotPasswordDto,
   SigninDto,
   SignupDto,
   resetPasswordDto,
 } from 'src/dto/user.dto';
 import { Public } from 'src/decorator/public.decorator';
 import { User } from 'src/decorator/user.decorator';
-import * as session from 'express-session';
 import { CaptchaService } from 'src/tool/captcha/captcha.service';
 
 @Controller('auth')
@@ -39,8 +38,11 @@ export class AuthController {
 
   @Post('forgot-password')
   @Public()
-  forgotPassword(@Body() email: EmailDto) {
-    return this.authService.forgotPassword(email);
+  forgotPassword(
+    @Body() data: ForgotPasswordDto,
+    @Session() session: CaptchaSession,
+  ) {
+    return this.authService.forgotPassword(data, session);
   }
 
   @Get('reset-password')

@@ -38,10 +38,14 @@ export class SigninDto {
   @MinLength(8)
   password: string;
 }
-export class EmailDto {
+export class ForgotPasswordDto {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @IsNotEmpty()
+  @IsString()
+  captcha: string;
 }
 
 export class resetPasswordDto {
